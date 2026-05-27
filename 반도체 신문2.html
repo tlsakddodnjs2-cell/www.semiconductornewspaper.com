@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반도체 탐험 신문 — 정인성 칼럼 시리즈</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1008;
+    --paper: #f5f0e8;
+    --paper-dark: #ede7d5;
+    --accent1: #1a3a5c;   /* 딥블루 */
+    --accent2: #c0392b;   /* 레드 */
+    --accent3: #e67e22;   /* 오렌지 */
+    --accent4: #27ae60;   /* 그린 */
+    --accent5: #8e44ad;   /* 퍼플 */
+    --accent6: #2980b9;   /* 라이트블루 */
+    --gold: #b7860b;
+    --light-line: #c9b99a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #2a2a2a;
+    font-family: 'Noto Serif KR', serif;
+    color: var(--ink);
+  }
+
+  /* ── NAVIGATION ── */
+  .nav-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    height: 52px;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-title {
+    font-family: 'Black Han Sans', sans-serif;
+    color: #f5d98b;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-right: 14px;
+    letter-spacing: 1px;
+  }
+  .nav-btn {
+    background: none;
+    border: 1.5px solid #555;
+    color: #ccc;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: #f5d98b;
+    border-color: #f5d98b;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ── PAGE CONTAINER ── */
+  .page {
+    display: none;
+    max-width: 900px;
+    margin: 72px auto 40px;
+    background: var(--paper);
+    box-shadow: 0 8px 40px rgba(0,0,0,.5);
+    border-radius: 2px;
+  }
+  .page.active { display: block; }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--accent1);
+    color: white;
+    padding: 28px 36px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 200px;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.05));
+  }
+  .masthead-sub {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #f5d98b;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .masthead-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .masthead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,.75);
+    border-top: 1px solid rgba(255,255,255,.2);
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  .masthead-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .masthead-meta strong { color: #f5d98b; }
+  .issue-badge {
+    position: absolute;
+    top: 20px; right: 30px;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: var(--accent2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 11px;
+    color: white;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .issue-badge .num {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    margin: 0;
+    padding: 20px 36px;
+    background: var(--paper-dark);
+    border-left: 5px solid var(--accent2);
+    border-bottom: 1px solid var(--light-line);
+  }
+  .summary-box h3 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 13px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .summary-box p {
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: #2a1f0f;
+  }
+
+  /* ── MAIN CONTENT GRID ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--light-line);
+  }
+  .content-left {
+    padding: 24px 28px 24px 36px;
+    border-right: 1px solid var(--light-line);
+  }
+  .content-right {
+    padding: 24px 36px 24px 28px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .label-blue  { background: var(--accent1); color: white; }
+  .label-red   { background: var(--accent2); color: white; }
+  .label-green { background: var(--accent4); color: white; }
+  .label-orange{ background: var(--accent3); color: white; }
+  .label-purple{ background: var(--accent5); color: white; }
+  .label-cyan  { background: var(--accent6); color: white; }
+  .label-gold  { background: var(--gold);    color: white; }
+
+  .sec-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 17px;
+    margin-bottom: 12px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .body-text {
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: #2d1e0f;
+  }
+
+  /* ── IMAGE IN ARTICLE ── */
+  .article-img {
+    width: 100%;
+    border-radius: 3px;
+    margin: 14px 0;
+    border: 1px solid var(--light-line);
+    display: block;
+  }
+  .img-caption {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    color: #7a6545;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  /* ── VOCABULARY BOX ── */
+  .vocab-section {
+    padding: 22px 36px;
+    background: #f9f5ee;
+    border-top: 3px double var(--light-line);
+    border-bottom: 3px double var(--light-line);
+  }
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .vocab-card {
+    background: white;
+    border-radius: 6px;
+    padding: 12px 14px;
+    border-top: 3px solid;
+    box-shadow: 0 1px 6px rgba(0,0,0,.07);
+  }
+  .vocab-term {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .vocab-def {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    color: #5a4030;
+    line-height: 1.6;
+  }
+
+  /* ── INSIGHT BOX ── */
+  .insight-section {
+    padding: 22px 36px;
+    background: linear-gradient(135deg, #1a3a5c08, #c0392b06);
+    border-bottom: 1px solid var(--light-line);
+  }
+  .insight-inner {
+    background: white;
+    border-radius: 8px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--accent1);
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: #2d1e0f;
+    position: relative;
+  }
+  .insight-inner::before {
+    content: '✍️';
+    position: absolute;
+    top: -10px; left: 14px;
+    font-size: 22px;
+    background: white;
+    padding: 0 4px;
+  }
+
+  /* ── RECOMMEND BOX ── */
+  .recommend-section {
+    padding: 18px 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--light-line);
+    background: #fff9f0;
+  }
+  .recommend-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+  .recommend-text {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #3a2810;
+  }
+  .recommend-text strong {
+    color: var(--accent2);
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 14px;
+  }
+
+  /* ── ROLLING PAPER ── */
+  .rolling-section {
+    padding: 24px 36px 30px;
+    background: var(--paper);
+  }
+  .rolling-intro {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12.5px;
+    color: #7a6545;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .rolling-input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .rolling-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid var(--light-line);
+    border-radius: 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+  }
+  .rolling-input:focus {
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 3px rgba(26,58,92,.1);
+  }
+  .rolling-name {
+    width: 90px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--light-line);
+    border-radius: 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+  }
+  .rolling-name:focus { border-color: var(--accent1); }
+  .rolling-btn {
+    padding: 10px 18px;
+    background: var(--accent1);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+    white-space: nowrap;
+  }
+  .rolling-btn:hover { background: #254d7a; }
+  .rolling-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 80px;
+  }
+  .rolling-note {
+    background: white;
+    border: 1.5px solid var(--light-line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    min-width: 140px;
+    max-width: 200px;
+    box-shadow: 2px 3px 8px rgba(0,0,0,.07);
+    transform: rotate(calc(var(--r) * 1deg));
+    transition: transform .2s;
+    position: relative;
+  }
+  .rolling-note:hover { transform: rotate(0deg) scale(1.04); z-index: 2; }
+  .rolling-note-name {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 11px;
+    color: var(--accent2);
+    margin-bottom: 5px;
+  }
+  .rolling-note-msg {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #3a2810;
+  }
+  .rolling-empty {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    color: #b09070;
+    font-style: italic;
+    padding: 20px 0;
+  }
+
+  /* ── FRONT PAGE (INDEX) ── */
+  .front-page .masthead {
+    padding: 40px 36px 30px;
+  }
+  .front-page .masthead-title {
+    font-size: clamp(32px, 7vw, 56px);
+  }
+  .edition-line {
+    border-top: 3px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    padding: 6px 36px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    color: #7a6545;
+    background: var(--paper-dark);
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 20px 36px;
+    border-bottom: 2px solid var(--light-line);
+  }
+  .toc-item {
+    padding: 14px 16px;
+    border-bottom: 1px dashed var(--light-line);
+    cursor: pointer;
+    transition: background .15s;
+    border-radius: 4px;
+  }
+  .toc-item:hover { background: rgba(26,58,92,.06); }
+  .toc-num {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 11px;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .toc-name {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .toc-desc {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    color: #7a6545;
+  }
+  .front-lead {
+    padding: 24px 36px;
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 28px;
+    border-bottom: 1px solid var(--light-line);
+  }
+  .front-lead h2 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 22px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .front-lead-img {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--light-line);
+  }
+  .divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent3) 100%);
+    margin: 0;
+  }
+
+  /* ── HIGHLIGHT QUOTE ── */
+  .pull-quote {
+    border-left: 4px solid var(--accent3);
+    padding: 10px 16px;
+    margin: 16px 0;
+    background: rgba(230,126,34,.06);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent1);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #eef4fb;
+    border: 1px solid #bdd3ec;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #1a3a5c;
+  }
+  .info-box strong { color: var(--accent2); }
+
+  /* RESPONSIVE */
+  @media (max-width: 660px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .content-left { border-right: none; border-bottom: 1px solid var(--light-line); }
+    .toc-grid { grid-template-columns: 1fr; }
+    .front-lead { grid-template-columns: 1fr; }
+    .page { margin: 58px 8px 30px; }
+    .masthead, .summary-box, .content-left, .content-right,
+    .vocab-section, .insight-section, .recommend-section, .rolling-section,
+    .front-lead, .toc-grid { padding-left: 18px; padding-right: 18px; }
+    .edition-line { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION BAR -->
+<nav class="nav-bar">
+  <div class="nav-title">⚙ 반도체 탐험 신문</div>
+  <button class="nav-btn active" onclick="showPage(0)">표지</button>
+  <button class="nav-btn" onclick="showPage(1)">1편 · 컴퓨터&트랜지스터</button>
+  <button class="nav-btn" onclick="showPage(2)">2편 · 산화</button>
+  <button class="nav-btn" onclick="showPage(3)">3편 · 포토</button>
+  <button class="nav-btn" onclick="showPage(4)">4편 · 식각</button>
+  <button class="nav-btn" onclick="showPage(5)">5편 · 증착</button>
+  <button class="nav-btn" onclick="showPage(6)">6편 · 금속배선</button>
+</nav>
+
+<!-- ============================================================ -->
+<!--  PAGE 0 : FRONT / INDEX                                       -->
+<!-- ============================================================ -->
+<div class="page front-page active" id="page-0">
+  <div class="masthead">
+    <div class="masthead-sub">반도체 전공정 시리즈 특집</div>
+    <div class="masthead-title">⚙ 반도체 탐험 신문</div>
+    <div class="masthead-meta">
+      <span>📅 <strong>2025 · 특집호</strong></span>
+      <span>✍️ 원작 칼럼 <strong>정인성 작가</strong></span>
+      <span>📰 출처 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>🎓 대상 <strong>고등학교 1학년 독자</strong></span>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="edition-line">
+    <span>📌 이 신문은 반도체 전공정 6편 시리즈를 고등학생 눈높이로 재구성한 정보공유지입니다</span>
+    <span>총 6면 구성</span>
+  </div>
+
+  <div class="front-lead">
+    <div>
+      <h2>우리 손 안의 스마트폰,<br>그 안에 숨은 기적 — 반도체</h2>
+      <p class="body-text">
+        반도체는 단순한 부품이 아닙니다. 전 세계가 반도체를 차지하려는 이유, 그 제조 과정의 비밀을 SK하이닉스 뉴스룸에서 연재된 <strong>정인성 작가</strong>의 전공정 시리즈 6편을 통해 알아봅시다.
+        <br><br>
+        이 신문은 <strong>전자공학과 진로</strong>에 관심 있는 제가 직접 읽고 친구들에게 전달하기 위해 만든 정보공유지입니다. 어려운 용어는 단어장으로, 핵심 내용은 요약으로, 그리고 저의 생각까지 솔직하게 담았어요.
+      </p>
+      <div class="pull-quote">
+        "기술을 외우려 하지 말고, 왜 그 기술이 필요했는지 '관계'에 주목하라." — 정인성 작가
+      </div>
+    </div>
+    <div>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/5p.jpg" class="front-lead-img" alt="MOSFET" onerror="this.style.display='none'">
+      <p style="font-family:'Noto Sans KR',sans-serif;font-size:11px;color:#7a6545;text-align:center;margin-top:6px;">▲ 강대원 박사의 MOSFET 모형 구조 (SK하이닉스 뉴스룸)</p>
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div style="padding: 18px 36px 8px; border-bottom: 2px solid var(--ink);">
+    <div class="sec-label label-blue">목 차</div>
+    <div class="sec-title">이번 신문, 이런 내용이 담겨 있어요</div>
+  </div>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="showPage(1)">
+      <div class="toc-num">1 면</div>
+      <div class="toc-name">컴퓨터와 트랜지스터의 탄생</div>
+      <div class="toc-desc">게으른 인간이 컴퓨터를 만든 이유 · 진공관 → 트랜지스터 → MOSFET 혁명</div>
+    </div>
+    <div class="toc-item" onclick="showPage(2)">
+      <div class="toc-num">2 면</div>
+      <div class="toc-name">반도체 공정 개괄과 산화</div>
+      <div class="toc-desc">FEOL · BEOL · 실리콘에 유리막을 씌우는 산화 공정의 비밀</div>
+    </div>
+    <div class="toc-item" onclick="showPage(3)">
+      <div class="toc-num">3 면</div>
+      <div class="toc-name">빛으로 패턴을 그리는 포토 공정</div>
+      <div class="toc-desc">과자 틀처럼 찍어내는 노광기 · 포토레지스트 · EUV의 비밀</div>
+    </div>
+    <div class="toc-item" onclick="showPage(4)">
+      <div class="toc-num">4 면</div>
+      <div class="toc-name">불필요한 부분을 파내는 식각 공정</div>
+      <div class="toc-desc">초코시럽 자리를 파내듯 · 건식 vs 습식 · RIE로 3마리 토끼 잡기</div>
+    </div>
+    <div class="toc-item" onclick="showPage(5)">
+      <div class="toc-num">5 면</div>
+      <div class="toc-name">미세화를 위한 핵심 증착 공정</div>
+      <div class="toc-desc">초코시럽을 채워 넣듯 · CVD · PVD · 원자층 하나씩 쌓는 ALD</div>
+    </div>
+    <div class="toc-item" onclick="showPage(6)">
+      <div class="toc-num">6 면 (완결)</div>
+      <div class="toc-name">반도체에 생명을 불어넣는 금속배선</div>
+      <div class="toc-desc">납땜 대신 금속배선 · 구리 vs 알루미늄 · 협력과 소통의 산업</div>
+    </div>
+  </div>
+
+  <!-- INTRO NOTE -->
+  <div style="padding: 22px 36px 28px;">
+    <div class="sec-label label-gold">이 신문을 읽기 전에</div>
+    <div class="info-box" style="margin-top:10px;">
+      각 면에는 <strong>핵심 요약</strong>, <strong>지식 심화</strong>, <strong>핵심 단어장</strong>, <strong>나의 생각&amp;인사이트</strong>, <strong>추천 대상</strong>, 그리고 <strong>친구들의 한마디(롤링페이퍼)</strong> 코너가 담겨 있어요.<br><br>
+      상단 버튼으로 각 면을 자유롭게 이동할 수 있고, 롤링페이퍼에 직접 의견을 남길 수도 있습니다. (이름+한마디 입력 후 '남기기' 클릭)
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 1 : 컴퓨터와 트랜지스터의 탄생                          -->
+<!-- ============================================================ -->
+<div class="page" id="page-1">
+  <div class="masthead" style="background: #1a3a5c;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 1편</div>
+    <div class="masthead-title">컴퓨터, 트랜지스터의 탄생과 반도체</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>🔗 <strong>news.skhynix.co.kr</strong></span>
+      <span>📅 <strong>2022. 08. 18</strong></span>
+    </div>
+    <div class="issue-badge"><span>1</span><span class="num">면</span></div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-box">
+    <h3>📋 핵심 요약</h3>
+    <p>
+      반도체는 이제 단순 수출품을 넘어 국가 안보까지 좌우하는 핵심 자원입니다. 컴퓨터의 역사는 1871년 찰스 배비지의 '해석 기관'에서 출발해, 진공관 기반의 에니악(ENIAC), 그리고 트랜지스터와 MOSFET으로 이어지는 혁신의 연속입니다. MOSFET은 '붕어빵 찍듯' 대량 제조가 가능해서 우리 모두가 스마트폰을 가질 수 있게 해준 핵심 발명품입니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <!-- LEFT : 핵심 내용 -->
+    <div class="content-left">
+      <div class="sec-label label-blue">핵심 내용</div>
+      <div class="sec-title">인간의 게으름이 컴퓨터를 탄생시켰다</div>
+      <p class="body-text">
+        사람들은 수천 개의 숫자를 실수 없이 계산하거나, 원주율을 수만 자리까지 구하는 복잡한 작업을 기계에게 시키고 싶었습니다. 1871년 찰스 배비지가 만든 <strong>해석 기관(Analytical Machine)</strong>은 펀치 카드로 명령을 넣고 결과를 출력하는, 현대 컴퓨터와 구조적으로 동일한 원시 컴퓨터였어요. 동력원이 증기였을 뿐입니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/1p_2.jpg" class="article-img" alt="증기 자동문 vs 전기 자동문" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 증기 기반(좌) vs 전기 기반(우) 자동문 비교 — 전기가 훨씬 효율적! (SK하이닉스 뉴스룸)</p>
+      <p class="body-text">
+        전기가 발명되자 전기로 작동하는 컴퓨터 <strong>에니악(ENIAC)</strong>이 탄생했습니다. 17만 개 이상의 진공관으로 구성됐고, 전력 소비가 무려 <strong>170kW</strong>(전자레인지 170대 분)였어요. 방 하나를 꽉 채울 만큼 거대했지만 1990년대 계산기보다 성능이 낮았습니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/4p.jpg" class="article-img" alt="에니악" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 방 하나를 꽉 채운 에니악(ENIAC) — 현재 계산기만도 못한 성능! (Wikipedia)</p>
+
+      <div class="pull-quote">
+        "컴퓨터와 '전자회로'는 전혀 다른 개념이다. 컴퓨터는 목적, 전자회로는 수단이다."
+      </div>
+    </div>
+
+    <!-- RIGHT : 심화 지식 -->
+    <div class="content-right">
+      <div class="sec-label label-red">심화 지식</div>
+      <div class="sec-title">트랜지스터와 MOSFET 혁명</div>
+      <p class="body-text">
+        에니악의 한계를 넘으려면 진공관보다 훨씬 작고 효율적인 부품이 필요했습니다. 1947년 드디어 <strong>트랜지스터</strong>가 발명됩니다. 트랜지스터는 큰 전류를 매우 작은 전류로 제어할 수 있는 혁신적인 부품입니다. N형과 P형 반도체를 조합해 신호를 끊고 연결하는 원리는, 본질적으로 밧줄로 증기 이동을 제어하는 것과 같습니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/3p_2.jpg" class="article-img" alt="트랜지스터 구조" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 트랜지스터 구조 — N형·P형 반도체 두 가지가 사용된다 (SK하이닉스 뉴스룸)</p>
+      <p class="body-text">
+        1959년, 벨 연구소의 <strong>강대원 박사</strong>와 모하메드 아탈라 박사가 <strong>MOSFET</strong>을 개발합니다. 이 납작한 트랜지스터는 실리콘 웨이퍼 위에서 <strong>붕어빵 찍듯 대량으로 생산</strong>할 수 있었습니다.
+      </p>
+      <div class="info-box">
+        <strong>💡 MOSFET이 위대한 이유</strong><br>
+        기존 트랜지스터(BJT)는 하나하나 납땜해서 연결해야 했지만, MOSFET은 수억 개가 이미 납땜된 상태로 한꺼번에 제조됩니다. 붕어빵 틀을 작게 만들면 같은 넓이에 수십 배 더 많이 찍어낼 수 있는 것처럼, 반도체 공장의 본질은 바로 'MOSFET을 싸게 많이 만드는 것'입니다.
+      </div>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/5p.jpg" class="article-img" alt="MOSFET 모형" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 강대원 박사의 MOSFET 모형 구조 (SK하이닉스 뉴스룸)</p>
+    </div>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">이 칼럼에서 꼭 알아야 할 단어들</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">CPU</div>
+        <div class="vocab-def">Central Processing Unit. 컴퓨터의 두뇌. 모든 계산 처리를 담당하는 중앙 처리 장치.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">진공관</div>
+        <div class="vocab-def">에니악에 사용된 전구처럼 생긴 부품. 전기 신호를 제어하지만 크고 열이 많이 남.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">트랜지스터</div>
+        <div class="vocab-def">큰 전류를 작은 전류로 제어하는 혁신적 부품. 1947년 발명. 현대 전자기기의 기본 단위.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">MOSFET</div>
+        <div class="vocab-def">납작한 형태의 트랜지스터. 실리콘 웨이퍼 위에서 대량 생산 가능. 현대 반도체의 핵심.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">실리콘 웨이퍼</div>
+        <div class="vocab-def">반도체를 만드는 기판. 얇고 둥근 실리콘 판. 그 위에 수십억 개의 트랜지스터를 새김.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">반도체</div>
+        <div class="vocab-def">도체와 부도체의 중간 성질을 가진 물질. MOSFET으로 인해 '집적회로 칩' 의미로도 쓰임.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      이 칼럼을 읽고 가장 인상 깊었던 건 "컴퓨터와 전자회로는 별개의 개념"이라는 말이었습니다. 해석 기관을 보면 이미 1800년대에도 컴퓨터의 구조(입력-연산-출력)를 이해하고 있었는데, 그걸 현실화한 건 '전기'라는 수단의 등장이었죠.
+      <br><br>
+      그리고 MOSFET의 탄생이 정말 혁명적이라고 느꼈습니다. '붕어빵 틀'이라는 비유 하나로 대량 생산의 개념이 머릿속에 딱 들어왔어요. 기술을 개발하는 것만큼 <strong>그걸 대량으로 만드는 방법</strong>을 찾는 것도 중요하다는 사실, 앞으로의 진로에서 항상 기억하고 싶습니다.
+    </div>
+  </div>
+
+  <!-- RECOMMEND -->
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "스마트폰이 어떻게 만들어지는지 궁금한 친구", "전자공학·컴퓨터공학 진로를 고민 중인 친구", "역사 속 발명이 현재 기술에 어떻게 이어지는지 알고 싶은 친구"에게 이 글을 추천합니다.
+    </div>
+  </div>
+
+  <!-- ROLLING PAPER -->
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">이 글을 읽고 느낀 점, 응원의 한마디를 남겨주세요!</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-1" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-1" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(1)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-1">
+      <div class="rolling-note" style="--r:-2;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">에니악이 전자레인지 170대 전력을 쓴다니 충격.. 지금 내 폰이 기적이구나 🤯</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 2 : 산화                                                -->
+<!-- ============================================================ -->
+<div class="page" id="page-2">
+  <div class="masthead" style="background: #1e4d3a;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 2편</div>
+    <div class="masthead-title">반도체 공정 개괄과 산화</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>📅 <strong>2022. 09. 22</strong></span>
+    </div>
+    <div class="issue-badge" style="background:#27ae60;"><span>2</span><span class="num">면</span></div>
+  </div>
+
+  <div class="summary-box" style="border-left-color: #27ae60;">
+    <h3 style="color:#27ae60;">📋 핵심 요약</h3>
+    <p>
+      반도체 제조는 크게 소자를 만드는 <strong>FEOL</strong>과 소자를 연결하는 <strong>BEOL</strong>로 나뉩니다. 산화 공정은 실리콘에 산소를 반응시켜 유리(SiO₂) 보호막을 만드는 공정입니다. 유리막은 화학물질을 차단하고 전류도 막아주는 일석이조 역할을 합니다. 산화 방식은 습식·건식·라디칼 세 가지로 나뉘며, 각각 속도와 품질 면에서 장단점이 다릅니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="sec-label label-green">핵심 내용</div>
+      <div class="sec-title">반도체 공정, 어떻게 진행되나?</div>
+      <p class="body-text">
+        일반 전자기기를 분해하면 기판(PCB) 위에 소자들이 납땜돼 있습니다. 이처럼 반도체도 <strong>'소자 제조 → 소자 연결'</strong> 순서로 만들어집니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/2P-3.png" class="article-img" alt="FEOL BEOL" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 공정 진행 방향 — FEOL(소자 영역) → BEOL(배선 영역) (SK하이닉스 뉴스룸)</p>
+      <div class="info-box">
+        <strong>FEOL (Front End Of the Line)</strong> — 웨이퍼 위에 트랜지스터 등 소자를 만드는 과정<br>
+        <strong>BEOL (Back End Of the Line)</strong> — 소자들을 미세 배선으로 연결하는 과정<br>
+        이 두 과정을 합쳐 '전공정'이라고 합니다.
+      </div>
+      <p class="body-text">
+        산화, 포토, 식각, 증착 등의 공정은 모두 FEOL과 BEOL 과정에서 사용되는 수단들입니다. 목적은 하나 — <strong>미세한 패턴을 아주 많이 만들어내는 것</strong>입니다.
+      </p>
+    </div>
+
+    <div class="content-right">
+      <div class="sec-label label-cyan">심화 지식</div>
+      <div class="sec-title">유리로 보호막 만들기 — 산화</div>
+      <p class="body-text">
+        실리콘(Si)이 산소와 만나면 <strong>이산화규소(SiO₂)</strong>, 즉 유리가 됩니다. 일상에서 염산·황산도 유리병에 보관하듯, 이 유리막은 반도체에서도 강력한 보호막 역할을 합니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/5P-2.png" class="article-img" alt="게이트 옥사이드" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 게이트(G)와 전류 통로 사이를 막는 산화막(빨간 네모) (Wikipedia)</p>
+      <p class="body-text">
+        산화 공정은 크게 세 가지입니다:
+      </p>
+      <div class="info-box">
+        💧 <strong>습식 산화</strong> — 고온의 수증기 사용. 빠르지만 균일도 낮음<br><br>
+        🔥 <strong>건식 산화</strong> — 고온 산소 기체 사용. 느리지만 균일하고 고품질. 게이트 산화막에 사용<br><br>
+        ⚡ <strong>라디칼 산화</strong> — 반응성 높은 라디칼 기체 사용. 가장 균일하고 고품질. 3D 구조에도 효과적
+      </div>
+      <div class="pull-quote">
+        "물을 쓰면 빠르지만 거칠고, 산소만 쓰면 느리지만 정밀하다. 라디칼은 구석구석까지 균일하게!"
+      </div>
+    </div>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">2편 핵심 단어 정리</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">FEOL / BEOL</div>
+        <div class="vocab-def">Front/Back End Of Line. 전공정의 앞단(소자 형성)과 뒷단(배선 연결)을 의미.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">산화 공정</div>
+        <div class="vocab-def">실리콘에 산소를 반응시켜 보호막(SiO₂·유리)을 만드는 공정. 차단막 역할.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">게이트 옥사이드</div>
+        <div class="vocab-def">MOSFET에서 게이트와 전류 통로 사이를 막는 산화막. 전류 누설 방지의 핵심.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">라디칼</div>
+        <div class="vocab-def">홀전자를 가져 반응성이 극히 높은 기체 상태. 산화 공정에서 최고 품질 막을 만듦.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">이온 주입 공정</div>
+        <div class="vocab-def">순수 실리콘에 불순물 이온을 주입해 N형/P형 반도체로 바꾸는 과정.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">HKMG</div>
+        <div class="vocab-def">High-K Metal Gate. 기존 산화막 대신 누설 전류를 더 잘 막는 신소재 게이트 절연막.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      산화 공정에서 '실리콘이 산소와 만나면 유리가 된다'는 부분이 정말 신기했습니다. 화학 시간에 배운 산화 반응이 반도체 공장에서 이렇게 활용될 줄은 몰랐어요. 
+      <br><br>
+      또 습식·건식·라디칼이라는 세 가지 방법이 각각 트레이드오프(속도 vs 품질)를 가진다는 점이 흥미로웠습니다. <strong>모든 기술에는 최선이 아닌 '상황에 맞는 최적'이 있다</strong>는 걸 배웠습니다. 반도체 미세화가 진행될수록 라디칼처럼 정밀한 방법이 더욱 중요해진다는 것도요. 앞으로 공학 공부를 할 때도 이런 트레이드오프 관점을 잊지 않을 것 같아요.
+    </div>
+  </div>
+
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "화학에 흥미 있고 반도체 제조가 어떻게 이루어지는지 궁금한 친구", "공정 전체 흐름을 먼저 파악하고 싶은 친구", "FEOL·BEOL 같은 반도체 기초 용어를 처음 접하는 친구"에게 추천합니다.
+    </div>
+  </div>
+
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">2편을 읽고 느낀 점을 남겨주세요!</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-2" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-2" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(2)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-2">
+      <div class="rolling-note" style="--r:1.5;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">실리콘 + 산소 = 유리라니! 반도체가 유리로 감싸져 있다는 게 신기해</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 3 : 포토 공정                                           -->
+<!-- ============================================================ -->
+<div class="page" id="page-3">
+  <div class="masthead" style="background: #5a1e3a;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 3편</div>
+    <div class="masthead-title">반도체 패턴을 만드는 포토 공정</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>📅 <strong>2022. 10. 17</strong></span>
+    </div>
+    <div class="issue-badge" style="background:#8e44ad;"><span>3</span><span class="num">면</span></div>
+  </div>
+
+  <div class="summary-box" style="border-left-color: #8e44ad;">
+    <h3 style="color:#8e44ad;">📋 핵심 요약</h3>
+    <p>
+      포토 공정은 반도체에 회로 패턴을 새기는 핵심 단계입니다. 밀가루에 틀(도장)을 찍어 과자를 만들듯, 웨이퍼에 빛(레이저)으로 패턴을 그립니다. 핵심 장비는 <strong>노광기</strong>이며, 포토레지스트(감광액)·포토마스크·현상 등의 과정을 거칩니다. 빛의 파장이 짧을수록 더 미세한 패턴을 그릴 수 있는데, 이것이 EUV 노광기가 세계 패권 다툼의 핵심인 이유입니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="sec-label label-purple">핵심 내용</div>
+      <div class="sec-title">과자 틀처럼 찍어내는 포토 공정</div>
+      <p class="body-text">
+        수백 개의 똑같은 과자를 만들려면 어떻게 할까요? 밀가루를 넓게 펴고 틀로 찍으면 됩니다. 반도체도 마찬가지예요. 웨이퍼에 <strong>감광액(포토레지스트)</strong>을 바르고, 그 위에 빛을 쪼여 원하는 패턴을 새깁니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/04-13.png" class="article-img" alt="포토 공정 순서" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 포토 공정의 대략적인 순서 (SK하이닉스 뉴스룸)</p>
+      <p class="body-text">
+        포토 공정의 순서는 다음과 같습니다:
+      </p>
+      <div class="info-box">
+        ① <strong>포토레지스트 도포</strong> — 웨이퍼에 빛에 반응하는 감광액을 바름<br>
+        ② <strong>포토마스크 정렬</strong> — 원하는 패턴이 새겨진 판을 광원 앞에 배치<br>
+        ③ <strong>노광(Exposure)</strong> — 마스크를 통과한 레이저를 웨이퍼에 쪼임<br>
+        ④ <strong>현상(Develop)</strong> — 빛을 받아 변한 부분을 제거해 패턴 완성
+      </div>
+      <div class="pull-quote">
+        "EUV 노광기 한 대 가격이 1,000억 원 이상. 노광에 투자되는 돈은 산화의 12배!"
+      </div>
+    </div>
+
+    <div class="content-right">
+      <div class="sec-label label-red">심화 지식</div>
+      <div class="sec-title">더 작게! 분해능과 EUV의 비밀</div>
+      <p class="body-text">
+        포토레지스트는 두 종류입니다:
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/05-9.png" class="article-img" alt="포지티브 네거티브 포토레지스트" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 포지티브(빛 받은 부분 제거) vs 네거티브(빛 받은 부분 경화) 포토레지스트 (SK하이닉스 뉴스룸)</p>
+      <div class="info-box">
+        <strong>포지티브</strong> — 빛 받은 곳이 현상 후 제거됨. 미세 패턴에 유리<br>
+        <strong>네거티브</strong> — 빛 받은 곳이 경화(굳음). 저렴하지만 미세화엔 불리
+      </div>
+      <p class="body-text">
+        노광기의 핵심 성능은 <strong>분해능</strong>: d = λ/(2NA)<br>
+        λ(빛의 파장)가 작을수록, NA(개구수)가 클수록 더 미세하게 그릴 수 있습니다.
+      </p>
+      <div class="info-box">
+        📸 <strong>DUV (ArF)</strong> — 파장 193nm. 현재도 많이 사용<br>
+        🌟 <strong>EUV</strong> — 파장 13.5nm (DUV의 1/14). 가장 미세한 패턴 가능<br>
+        🔬 <strong>High NA EUV</strong> — 차세대. 렌즈를 더 크게 해 분해능 향상
+      </div>
+      <p class="body-text">
+        EUV 노광기는 빛의 파장이 너무 짧아서 물질에 흡수되기 때문에 거울만으로 광로를 구성해야 합니다. 상용화에 10년 이상 걸린 이유예요. 미·중 반도체 패권 다툼에서 EUV가 언급되는 건 이런 이유입니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">3편 핵심 단어 정리</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">포토레지스트</div>
+        <div class="vocab-def">빛에 반응해 성질이 변하는 감광액. 웨이퍼에 패턴을 새기기 위한 필수 재료.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">노광기</div>
+        <div class="vocab-def">레이저를 마스크에 통과시켜 웨이퍼에 패턴을 새기는 장비. EUV 노광기는 1대 1000억원 이상.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">포토마스크</div>
+        <div class="vocab-def">원하는 패턴이 새겨진 판. 빛이 통과할 영역과 막을 영역을 결정하는 '과자 틀'.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">분해능</div>
+        <div class="vocab-def">두 물체를 분리해 인식할 수 있는 최소 한계. 빛의 파장이 짧을수록 분해능이 높아짐.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">EUV</div>
+        <div class="vocab-def">Extreme Ultraviolet. 극자외선. 파장 13.5nm로 초미세 패턴 제작 가능. 네덜란드 ASML만 제조.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">현상(Develop)</div>
+        <div class="vocab-def">노광 후 빛을 받아 변성된 포토레지스트 부분을 제거해 패턴을 완성하는 과정.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      포토 공정에서 과자 틀 비유를 보며 '아, 이래서 반도체 설계가 중요하구나' 하고 실감했습니다. 마스크에 새겨진 패턴 하나가 반도체의 용도를 결정한다는 것 — CPU를 만들지, 메모리를 만들지가 전부 이 마스크에 달려 있다는 게 놀라웠어요.
+      <br><br>
+      또 EUV 노광기를 네덜란드 ASML 한 회사만 만들 수 있다는 사실이 인상적이었습니다. 반도체 패권 전쟁이 사실 '노광기 전쟁'이기도 하다는 것. 기술의 <strong>독점이 얼마나 강력한 무기</strong>인지 새삼 느꼈습니다. 전자공학 공부를 하면서 하드웨어뿐만 아니라 이런 산업 생태계도 함께 공부해야겠다고 생각했습니다.
+    </div>
+  </div>
+
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "미·중 반도체 뉴스를 접하고 'EUV가 뭔데?'라고 궁금했던 친구", "빛과 파장 개념을 물리적으로 이해하고 싶은 친구", "반도체 설계(팹리스)에 관심 있는 친구"에게 강력 추천합니다.
+    </div>
+  </div>
+
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">3편을 읽고 느낀 점을 남겨주세요!</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-3" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-3" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(3)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-3">
+      <div class="rolling-note" style="--r:-1.5;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">노광기 1대에 1000억?! 반도체 공부를 더 열심히 해야겠다는 동기부여 ✊</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 4 : 식각                                                -->
+<!-- ============================================================ -->
+<div class="page" id="page-4">
+  <div class="masthead" style="background: #3d1a0a;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 4편</div>
+    <div class="masthead-title">그려진 패턴을 파내는 '식각 공정'</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>📅 <strong>2022. 11. 25</strong></span>
+    </div>
+    <div class="issue-badge" style="background:#e67e22;"><span>4</span><span class="num">면</span></div>
+  </div>
+
+  <div class="summary-box" style="border-left-color: #e67e22;">
+    <h3 style="color:#e67e22;">📋 핵심 요약</h3>
+    <p>
+      식각은 포토 공정으로 그려진 패턴에서 필요 없는 부분을 제거하는 공정입니다. 쿠키 사이에 초코 자리를 파내는 것처럼요. 화학적 방법(선택적 제거)과 물리적 방법(충돌로 제거)을 합친 <strong>RIE(반응성 이온 식각)</strong>이 현재 핵심 기술입니다. 건식 vs 습식, 등방성 vs 비등방성의 개념이 핵심입니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="sec-label label-orange">핵심 내용</div>
+      <div class="sec-title">초코 자리를 파내는 것처럼 — 식각</div>
+      <p class="body-text">
+        과자 속에 초코 시럽을 넣으려면 먼저 자리를 파야 합니다. 반도체도 마찬가지예요. 포토마스크로 가려지지 않은 부분을 화학물질로 파내는 게 식각 공정입니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/02-1-1-1.png" class="article-img" alt="등방성 비등방성 식각" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 등방성(사방으로 퍼짐) vs 비등방성(한 방향으로만) 식각 비교 (SK하이닉스 뉴스룸)</p>
+      <div class="info-box">
+        <strong>식각의 4대 핵심 특성:</strong><br>
+        🎯 <strong>선택비</strong> — 원하는 물질만 정확히 제거하는 능력<br>
+        ↕️ <strong>방향성</strong> — 등방성(모든 방향) vs 비등방성(한 방향만)<br>
+        ⚡ <strong>속도</strong> — 얼마나 빠르게 제거하는가<br>
+        📐 <strong>균일도</strong> — 웨이퍼 전체에서 얼마나 고르게 되는가
+      </div>
+      <p class="body-text">
+        <strong>습식 식각</strong>은 웨이퍼를 액체에 담그는 방식. 빠르지만 등방성이 강해 미세 패턴에 부적합합니다. <strong>건식 식각</strong>은 기체를 사용하며, 비등방성이 강해 현대 반도체에 필수입니다.
+      </p>
+    </div>
+
+    <div class="content-right">
+      <div class="sec-label label-red">심화 지식</div>
+      <div class="sec-title">화학 + 물리 = RIE로 3마리 토끼!</div>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/04-1-2.png" class="article-img" alt="RIE 공정" onerror="this.style.display='none'">
+      <p class="img-caption">▲ RIE(반응성 이온 식각) 공정 개요 — 물리+화학 방식의 조합 (SK하이닉스 뉴스룸)</p>
+      <p class="body-text">
+        현장에서 가장 중요한 식각 기술은 <strong>RIE (Reactive Ion Etching)</strong>입니다. 기체를 플라즈마로 만든 뒤 전기장으로 이온을 가속시켜 웨이퍼에 충돌시킵니다.
+      </p>
+      <div class="info-box">
+        RIE가 잡는 3마리 토끼:<br>
+        1️⃣ <strong>물리적 식각</strong> — 이온을 직진으로 가속해 충돌 제거 (비등방성↑)<br>
+        2️⃣ <strong>결합 약화</strong> — 충돌로 표면 원자 결합을 느슨하게 만듦<br>
+        3️⃣ <strong>라디칼 화학 식각</strong> — 반응성 높은 라디칼이 약해진 부분을 빠르게 제거 (선택비↑)
+      </div>
+      <div class="pull-quote">
+        "규소 + 불소 기체 → 불화규소(SiF₄). 기화점이 영하 90.3도여서 반응과 동시에 사라진다!"
+      </div>
+      <p class="body-text">
+        D램의 캐패시터는 점점 더 높게 쌓아야 하고, NAND는 100개 이상의 층을 한번에 뚫어야 합니다. 식각의 중요성이 갈수록 커지는 이유입니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">4편 핵심 단어 정리</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">식각 (Etching)</div>
+        <div class="vocab-def">웨이퍼에서 필요 없는 부분을 선택적으로 제거하는 공정. 반도체 패턴 형성의 핵심.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">등방성 / 비등방성</div>
+        <div class="vocab-def">등방성은 모든 방향으로 식각. 비등방성은 특정 방향으로만. 미세 패턴엔 비등방성 필요.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">RIE</div>
+        <div class="vocab-def">Reactive Ion Etching. 물리+화학 방식 결합. 선택비와 비등방성을 동시에 확보.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">플라즈마</div>
+        <div class="vocab-def">기체에 강한 에너지를 가해 이온화된 상태. 전자(-)와 양이온(+)으로 분리됨.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">선택비</div>
+        <div class="vocab-def">식각에서 원하는 물질만 제거하는 능력. 선택비가 높을수록 정밀한 공정 가능.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">종횡비 (Aspect Ratio)</div>
+        <div class="vocab-def">식각 깊이를 폭으로 나눈 값. 클수록 깊고 좁은 구조. NAND는 종횡비가 매우 높음.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      '구리가 전기적 특성이 좋다는 건 100년 전부터 알았지만, 식각이 안 돼서 오래 못 쓴 것'이라는 내용이 정말 충격적이었습니다. 좋은 물질이라도 제조 공정이 따라오지 않으면 쓸 수 없다는 것 — 이게 반도체 산업의 핵심 딜레마인 것 같아요.
+      <br><br>
+      RIE가 물리·화학을 동시에 활용한다는 개념도 인상적이었습니다. 어떤 문제를 풀 때 <strong>두 가지 접근법을 융합</strong>하는 발상이 혁신을 만든다는 걸 배웠습니다. 앞으로 전자공학을 공부할 때도 이런 융합적 사고방식을 기르고 싶습니다.
+    </div>
+  </div>
+
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "화학 반응이 실제 공정에서 어떻게 활용되는지 궁금한 친구", "D램·NAND 같은 메모리 반도체 제조 과정이 궁금한 친구", "물리·화학을 융합적으로 배우고 싶은 친구"에게 추천합니다.
+    </div>
+  </div>
+
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">4편을 읽고 느낀 점을 남겨주세요!</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-4" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-4" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(4)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-4">
+      <div class="rolling-note" style="--r:2;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">구리가 100년 전부터 알려졌는데 최근에야 쓴다니... 기술의 역사가 신기해</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 5 : 증착                                                -->
+<!-- ============================================================ -->
+<div class="page" id="page-5">
+  <div class="masthead" style="background: #1a3d2a;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 5편</div>
+    <div class="masthead-title">"더 작게, 더 많이" 미세화를 위한 핵심 '증착 공정'</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>📅 <strong>2022. 12. 23</strong></span>
+    </div>
+    <div class="issue-badge" style="background:#27ae60;"><span>5</span><span class="num">면</span></div>
+  </div>
+
+  <div class="summary-box" style="border-left-color: #27ae60;">
+    <h3 style="color:#27ae60;">📋 핵심 요약</h3>
+    <p>
+      증착은 파낸 자리나 필요한 곳에 얇은 박막을 쌓는 공정입니다. 초코 자리에 시럽을 채워 넣는 것과 같아요. 화학 기상 증착(CVD), 물리 기상 증착(PVD), 원자층 증착(ALD) 세 가지가 있습니다. 특히 ALD는 원자 한 층씩 쌓기 때문에 초정밀 박막이 가능하지만 속도가 느립니다. 새로운 소재를 도입할 때는 소재 자체의 특성뿐 아니라 다른 공정과의 관계를 반드시 고려해야 합니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="sec-label label-green">핵심 내용</div>
+      <div class="sec-title">초코 시럽을 채워 넣듯 — 증착</div>
+      <p class="body-text">
+        식각으로 자리를 파냈다면, 이제 그 자리에 무언가를 채워야 합니다. 증착은 웨이퍼 위에 아주 얇은 박막(Thin Film)을 쌓는 과정입니다. 머리카락 두께의 수천분의 1 수준이에요.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/04-11.png" class="article-img" alt="스텝 커버리지와 갭 필" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 스텝 커버리지(위)와 갭 필 예시(아래) — 구석구석 고르게 채워야 함 (SK하이닉스 뉴스룸)</p>
+      <div class="info-box">
+        <strong>증착의 3대 품질 지표:</strong><br>
+        📐 <strong>균일도</strong> — 웨이퍼 전체에서 두께가 얼마나 고른가<br>
+        📏 <strong>스텝 커버리지</strong> — 울퉁불퉁한 표면에서도 균일하게 덮이는가<br>
+        🔲 <strong>갭 필(Gap Fill)</strong> — 좁고 깊은 틈도 빈 공간 없이 채우는가
+      </div>
+      <p class="body-text">
+        갭 필이 나쁘면 내부에 공동(Void, 빈 공간)이 생겨 추후 구조물이 무너질 수 있습니다. 반도체의 층층이 쌓인 구조에서는 치명적인 불량이 됩니다.
+      </p>
+    </div>
+
+    <div class="content-right">
+      <div class="sec-label label-cyan">심화 지식</div>
+      <div class="sec-title">CVD · PVD · ALD — 세 가지 증착법</div>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/06_%ED%95%9C%EA%B8%80.png" class="article-img" alt="CVD vs ALD" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 기존 CVD(한번에)와 ALD(원자층씩) 비교 개념 (SK하이닉스 뉴스룸)</p>
+      <div class="info-box">
+        🧪 <strong>CVD (화학 기상 증착)</strong><br>
+        두 기체를 반응시켜 웨이퍼 위에 물질 생성. 빠르지만 부산물·불순물 발생 가능.<br><br>
+        🔫 <strong>PVD (물리 기상 증착)</strong><br>
+        물질을 직접 기화시켜 날려 붙임(스퍼터링). 순도 높음. 금속 배선 제조에 주로 사용.<br><br>
+        ⚛️ <strong>ALD (원자층 증착)</strong><br>
+        원자 1개 층씩 쌓음. 극초정밀. D램 캐패시터같은 종횡비 높은 곳에 사용. 단, 속도 느림.
+      </div>
+      <div class="pull-quote">
+        "신소재의 좋은 특성은 양산에서 다른 공정들과 조화가 맞춰져야 비로소 가치가 있다."
+      </div>
+      <p class="body-text">
+        알루미늄과 산화규소는 열팽창 계수가 40배 차이납니다. 한 소재를 바꾸면 그 위아래 공정 전체가 바뀔 수 있습니다. 반도체 제조는 수백 개 공정이 <strong>서로 긴밀히 연결된 시스템</strong>입니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">5편 핵심 단어 정리</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">증착 (Deposition)</div>
+        <div class="vocab-def">웨이퍼 표면에 얇은 박막을 추가하는 공정. 산화와 달리 외부 물질을 덧붙임.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">CVD</div>
+        <div class="vocab-def">Chemical Vapor Deposition. 화학 기상 증착. 기체 반응으로 웨이퍼 표면에 박막 생성.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">PVD</div>
+        <div class="vocab-def">Physical Vapor Deposition. 물리 기상 증착. 물질을 직접 날려 붙임. 순도 높음.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">ALD</div>
+        <div class="vocab-def">Atomic Layer Deposition. 원자층 증착. 원자 1개 층씩 쌓아 초정밀 박막 형성.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">갭 필 (Gap Fill)</div>
+        <div class="vocab-def">좁고 깊은 틈을 박막으로 빈 공간 없이 채우는 능력. 이 특성이 나쁘면 불량 발생.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">열팽창 계수</div>
+        <div class="vocab-def">온도 변화에 따라 물질이 팽창하는 정도. 소재를 바꿀 때 반드시 고려해야 하는 특성.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      ALD가 원자 한 층씩 쌓는다는 개념에서 '이게 정말 가능한 기술인가?'라고 놀랐습니다. 원자 단위의 정밀도로 제조가 이루어진다는 게 상상을 초월합니다. 
+      <br><br>
+      더 인상적인 건 신소재 도입의 어려움에 대한 내용이었습니다. 뉴스에서 "OO배 성능의 신소재 개발"이라는 제목을 많이 봤는데, 정작 실제 반도체에 적용되는 경우는 드물다는 사실. <strong>발견과 적용 사이의 간극</strong>을 메우는 것이 진짜 공학자의 역할이라는 걸 배웠습니다. 대학에서 공정 엔지니어링을 공부할 때 이 관점을 잊지 않겠습니다.
+    </div>
+  </div>
+
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "소재공학·재료공학에 관심 있는 친구", "'OO배 성능 신소재' 뉴스를 보고 왜 바로 상용화 안 되는지 궁금했던 친구", "반도체에서 화학·물리·소재가 어떻게 연결되는지 알고 싶은 친구"에게 추천합니다.
+    </div>
+  </div>
+
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">5편을 읽고 느낀 점을 남겨주세요!</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-5" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-5" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(5)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-5">
+      <div class="rolling-note" style="--r:-2.5;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">원자 한 개 층씩 쌓는다고?! 과학의 경이로움 그 자체 🔬</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  PAGE 6 : 금속배선                                            -->
+<!-- ============================================================ -->
+<div class="page" id="page-6">
+  <div class="masthead" style="background: #2a1a3d;">
+    <div class="masthead-sub">반도체 전공정 시리즈 · 6편 완결</div>
+    <div class="masthead-title">반도체에 생명을 불어넣는 연결, '금속배선'</div>
+    <div class="masthead-meta">
+      <span>✍️ <strong>정인성 작가</strong></span>
+      <span>📰 <strong>SK하이닉스 뉴스룸</strong></span>
+      <span>📅 <strong>2023. 01. 13</strong></span>
+    </div>
+    <div class="issue-badge" style="background:#8e44ad;">✨<span class="num">완결</span></div>
+  </div>
+
+  <div class="summary-box" style="border-left-color: #8e44ad;">
+    <h3 style="color:#8e44ad;">📋 핵심 요약</h3>
+    <p>
+      소자를 만들었다면 이제 연결해야 합니다. 금속배선은 트랜지스터들을 서로 이어주는 공정으로, 반도체에 '목적'을 부여합니다. 알루미늄에서 구리로의 전환, 배리어 메탈, 컨택 등 수많은 기술 혁신이 담겨 있습니다. 반도체는 수만 명이 협력해 만드는 신뢰의 산업이며, 기술 간 관계와 소통 능력이 핵심입니다.
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="sec-label label-purple">핵심 내용</div>
+      <div class="sec-title">납땜 없이 연결하는 금속배선</div>
+      <p class="body-text">
+        기판 위 소자들을 납땜으로 연결하듯, 웨이퍼 위 트랜지스터들도 연결이 필요합니다. 반도체에서는 포토·식각·증착 기술을 조합해 머리카락 수천분의 1 두께의 금속 전선을 만듭니다.
+      </p>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/1p.png" class="article-img" alt="소자 영역과 금속 배선 영역" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 소자 영역(아래)을 금속 배선(위)으로 연결하는 구조 (Wikipedia)</p>
+      <div class="info-box">
+        <strong>금속배선의 3단계 구조:</strong><br>
+        🔩 <strong>배리어 메탈</strong> — 소자(실리콘)와 금속 사이 저항 줄이는 완충층. Ti·Co 등 사용<br>
+        🔌 <strong>컨택(Contact)</strong> — 소자와 첫 번째 금속층을 연결하는 접점. 텅스텐 주로 사용<br>
+        📡 <strong>금속 배선(Metal Line)</strong> — 소자와 소자를 연결하는 전선. 알루미늄·구리 사용
+      </div>
+      <p class="body-text">
+        같은 소자를 써도 <strong>연결 방식에 따라 CPU, GPU, 메모리가 달라집니다.</strong> 금속배선이 바로 반도체에 목적을 부여하는 공정입니다.
+      </p>
+    </div>
+
+    <div class="content-right">
+      <div class="sec-label label-red">심화 지식</div>
+      <div class="sec-title">알루미늄의 한계, 구리의 도전</div>
+      <img src="https://skhynix-prd-data.s3.ap-northeast-2.amazonaws.com/wp-content/uploads/2024/11/5p.png" class="article-img" alt="금속 배선" onerror="this.style.display='none'">
+      <p class="img-caption">▲ 소자층(붉은색)을 연결하는 금속배선(노란색) (Wikipedia)</p>
+      <p class="body-text">
+        구리가 알루미늄보다 전기적 특성이 좋다는 건 100년 전부터 알았습니다. 그러나 구리는 이산화규소 안으로 확산하는 특성이 있어 절연막을 망가뜨립니다. 이를 막기 위해 <strong>탄탈륨(Ta) 배리어</strong>가 필요했고, 구리 식각이 어려워 <strong>다마신(Damascene)</strong> 공법을 새로 개발해야 했습니다.
+      </p>
+      <div class="info-box">
+        <strong>알루미늄 배선 공정:</strong> 금속막 → 포토 → 식각 → 절연체 채움<br><br>
+        <strong>구리 배선 공정 (다마신):</strong> 절연체 먼저 → 구리 자리 식각 → 구리 채움 → 남은 구리 연마 제거
+      </div>
+      <div class="pull-quote">
+        "반도체는 수만 명이 십시일반으로 공헌하는 작품. 한 공정이 실패하면 전체가 작동 안 한다."
+      </div>
+      <p class="body-text">
+        인텔은 구리 배선 한계를 넘기 위해 코발트 배선을 시도했다가 수년간 큰 어려움을 겪었습니다. 기술 혁신은 단순히 새로운 소재 발견이 아니라, <strong>수백 개 공정이 함께 바뀌어야</strong> 가능합니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="vocab-section">
+    <div class="sec-label label-purple">📖 핵심 단어장</div>
+    <div class="sec-title" style="margin-top:8px;">6편 핵심 단어 정리</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" style="border-color: #8e44ad;">
+        <div class="vocab-term" style="color:#8e44ad;">금속배선 공정</div>
+        <div class="vocab-def">소자들을 금속 전선으로 연결해 반도체에 목적을 부여하는 마지막 전공정 단계.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #1a3a5c;">
+        <div class="vocab-term" style="color:#1a3a5c;">컨택 (Contact)</div>
+        <div class="vocab-def">소자층과 첫 번째 금속 배선을 연결하는 미세 접점. 주로 텅스텐(W) 사용.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #c0392b;">
+        <div class="vocab-term" style="color:#c0392b;">배리어 메탈</div>
+        <div class="vocab-def">금속과 실리콘 사이 저항을 줄이고 확산을 막는 완충 금속층. Ti·Co·Ta 등 사용.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #27ae60;">
+        <div class="vocab-term" style="color:#27ae60;">다마신 (Damascene)</div>
+        <div class="vocab-def">구리 배선 제조 공법. 절연체를 먼저 식각한 뒤 구리를 채우고 여분을 연마 제거.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #e67e22;">
+        <div class="vocab-term" style="color:#e67e22;">일렉트로마이그레이션</div>
+        <div class="vocab-def">전류 흐를 때 전자가 금속 원자를 밀어내는 현상. 배선 단선의 주요 원인.</div>
+      </div>
+      <div class="vocab-card" style="border-color: #2980b9;">
+        <div class="vocab-term" style="color:#2980b9;">FinFET</div>
+        <div class="vocab-def">3차원 MOSFET. 전류 통로가 물고기 지느러미 모양. CPU·GPU 등 로직 반도체에 사용.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-section">
+    <div class="sec-label label-orange">💭 나의 생각 &amp; 인사이트 (시리즈 마무리)</div>
+    <div class="insight-inner" style="margin-top:12px;">
+      6편을 모두 읽으며 가장 크게 느낀 건, <strong>반도체는 혼자 만드는 것이 아니라 수만 명이 협력해 만드는 작품</strong>이라는 점입니다. 산화에서 사용한 물질이 이후 식각에 영향을 주고, 노광기의 한계를 포토레지스트가 해결하는 것처럼 — 모든 공정이 서로 연결된 거대한 시스템이에요.
+      <br><br>
+      그리고 정인성 작가님이 시리즈 내내 강조한 "기술을 외우지 말고, 왜 그 기술이 필요했는지 이해하라"는 말이 계속 마음에 남습니다. 전자공학과를 목표로 하는 저에게, 이 칼럼 시리즈는 단순한 지식을 넘어 <strong>공학적 사고방식</strong>을 처음 접하게 해준 소중한 경험이었습니다. 이 신문을 읽는 친구들도 반도체에 대해 함께 관심을 가져줬으면 좋겠습니다!
+    </div>
+  </div>
+
+  <div class="recommend-section">
+    <div class="recommend-icon">🎯</div>
+    <div class="recommend-text">
+      <strong>이런 친구에게 강력 추천!</strong><br>
+      "CPU·GPU 같은 칩이 어떻게 만들어지는지 전체 그림을 알고 싶은 친구", "반도체 산업의 협력 구조와 국제 경쟁에 관심 있는 친구", "전자공학·컴퓨터공학 계열 진로를 진지하게 고민 중인 친구"에게 6편을 특별 추천합니다!
+    </div>
+  </div>
+
+  <div class="rolling-section">
+    <div class="sec-label label-green">💌 친구들의 한마디 롤링페이퍼</div>
+    <p class="rolling-intro" style="margin-top:10px;">6편 완결을 읽고 느낀 점, 신문 제작자에게 응원의 말도 남겨주세요! 💪</p>
+    <div class="rolling-input-area">
+      <input class="rolling-name" id="name-6" placeholder="이름(별명)" maxlength="8">
+      <input class="rolling-input" id="msg-6" placeholder="한마디를 남겨주세요 :)" maxlength="60">
+      <button class="rolling-btn" onclick="addNote(6)">남기기</button>
+    </div>
+    <div class="rolling-notes" id="notes-6">
+      <div class="rolling-note" style="--r:-1;">
+        <div class="rolling-note-name">🌟 신문 제작자</div>
+        <div class="rolling-note-msg">6편 완결! 반도체는 단순 기술이 아닌 협력의 예술이라는 걸 배웠어 🙌</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const COLORS = ['#1a3a5c','#c0392b','#27ae60','#e67e22','#8e44ad','#2980b9','#b7860b'];
+  const ROTATIONS = [-3,-2,-1,0,1,2,3,1.5,-1.5,2.5];
+
+  function showPage(idx) {
+    document.querySelectorAll('.page').forEach((p, i) => {
+      p.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === idx);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function addNote(pageNum) {
+    const nameEl = document.getElementById('name-' + pageNum);
+    const msgEl  = document.getElementById('msg-' + pageNum);
+    const container = document.getElementById('notes-' + pageNum);
+
+    const name = (nameEl.value || '익명').trim();
+    const msg  = msgEl.value.trim();
+    if (!msg) { msgEl.focus(); return; }
+
+    const count = container.querySelectorAll('.rolling-note').length;
+    const color = COLORS[count % COLORS.length];
+    const rot   = ROTATIONS[count % ROTATIONS.length];
+
+    const note = document.createElement('div');
+    note.className = 'rolling-note';
+    note.style.setProperty('--r', rot);
+    note.style.borderTopColor = color;
+    note.innerHTML = `
+      <div class="rolling-note-name" style="color:${color}">💬 ${name}</div>
+      <div class="rolling-note-msg">${msg}</div>
+    `;
+    container.appendChild(note);
+
+    nameEl.value = '';
+    msgEl.value = '';
+    note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Enter key for rolling paper
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    const focused = document.activeElement;
+    if (!focused) return;
+    const m = focused.id.match(/msg-(\d)/);
+    if (m) addNote(parseInt(m[1]));
+  });
+</script>
+
+</body>
+</html>
+
+<a href="https://www.example.com" target="_blank">Example 사이트 열기</a>
